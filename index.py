@@ -78,12 +78,15 @@ def generate_easyxf_import (font='Times New Roman',
     return sums
 
 secret_dict = { 'qlth.hpz.vn': 'hpz', 'tho.hns.edu.vn': 'tho', 'thpt.hns.edu.vn': 'thpt', 'mn.hns.edu.vn': 'mn' }
-def get_hasura_data(data, url):
-
-    # url = 'https://qlth.hpz.vn/v1/graphql'
+def get_hasura_data(data, dburl):
+    print ('dburl', dburl)
+    if dburl == None:
+      dburl = 'qlth.hpz.vn'
+    # url = dburl + '/v1/graphql'
+    url = 'https://%s/v1/graphql'%dburl
     headers = {
       # 'x-hasura-admin-secret': 'hpz',
-     'x-hasura-admin-secret': secret_dict[url],
+     'x-hasura-admin-secret': secret_dict[dburl],
      'content-type': 'application/json', 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36'}
     count_fail = 0
     while 1:
@@ -157,7 +160,7 @@ def get_hasura_data_with_query_and_variable(variable_values=None, query=None):
     data = {'query': query}
     if variable_values:
         data['variables'] = variable_values
-    dburl = variable_values['dburl']
+    dburl = variable_values.get('dburl',None)
     rs = get_hasura_data(data, dburl)
     return  rs
 Convert_number_to_APB = {0:'A', 1:'B', 2:'C', 3:'D', 4:'E', 5:'F',6:'G',7:'H',8:'I',9:'J', 10:'K'}
@@ -1053,7 +1056,7 @@ def index():
 #http://127.0.0.1:5000/dlxl/ne_nep?from=1987-09-22&to=2020-09-24
 #http://127.0.0.1:5000/dlxl/diem_danh?from=1987-09-22&to=2020-09-24
 #http://127.0.0.1:5000/dlxl/nn_chi_tiet?from=1987-09-22&to=2020-09-24
-#http://127.0.0.1:5000/dlxl/nn_chi_tiet?from=1987-09-22&to=2020-09-24&font_size=12&font=2&break_sheet=false
+#http://127.0.0.1:5000/dlxl/nn_chi_tiet?from=1987-09-22&to=2020-09-24&font_size=12&font=2&break_sheet=false&dburl=qlth.hpz.vn
 @app.route('/dlxl/<func_key>')
 def dlhaha(func_key):
 #     func_key= request.args.get('func',None)
